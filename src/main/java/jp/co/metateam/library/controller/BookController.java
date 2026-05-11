@@ -50,5 +50,42 @@ public class BookController {
 
         return "book/add";
     }
-    
+@PostMapping("/book/add")
+public String add(
+        @Valid @ModelAttribute BookMstDto dto,
+        BindingResult result,
+        Model model,
+        RedirectAttributes redirectAttributes)
+    {
+
+    if (result.hasErrors()) {
+
+    if (result.hasFieldErrors("title")) {
+        model.addAttribute(
+            "errTitle",
+            result.getFieldError("title").getDefaultMessage()
+        );
+    }
+
+    if (result.hasFieldErrors("isbn")) {
+        model.addAttribute(
+            "errISBN",
+            result.getFieldError("isbn").getDefaultMessage()
+        );
+    }
+
+    return "book/add";
+}
+
+    try {
+        bookMstService.insert(dto);
+    } catch (IllegalArgumentException e) {
+        result.rejectValue("isbn", "duplicate", e.getMessage());
+        return "book/add";
+    }
+
+    redirectAttributes.addFlashAttribute("message", "書籍を登録しました");
+
+    return "redirect:/book/index";
+}
 }

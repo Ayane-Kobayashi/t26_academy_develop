@@ -2,7 +2,9 @@ package jp.co.metateam.library.model;
 
 import java.security.Timestamp;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,11 +18,19 @@ public class BookMstDto {
     
     private Long id; 
     
-    private String isbn;
+@NotBlank(message = "書籍名を入力してください")
+@Size(max = 255, message = "書籍名は255文字以内で入力してください")
+private String title;
 
-    private String title;
-    
-    private Timestamp deletedAt;
+@NotBlank(message = "ISBNを入力してください")
 
-    private BookMst bookMst;
+@Pattern(
+    regexp = "^[0-9]*$",
+    message = "ISBNは半角数字で入力してください"
+)
+
+@Size(min = 13, max = 13, message = "ISBNは13桁で入力してください")
+
+private String isbn;
 }
+

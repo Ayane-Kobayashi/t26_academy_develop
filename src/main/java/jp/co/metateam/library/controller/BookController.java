@@ -24,11 +24,10 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 @Controller
 public class BookController {
-    
     private final BookMstService bookMstService;
 
     @Autowired
-    public BookController(BookMstService bookMstService){
+    public BookController(BookMstService bookMstService) {
         this.bookMstService = bookMstService;
     }
 
@@ -36,9 +35,7 @@ public class BookController {
     public String index(Model model) {
         // 書籍を全件取得
         List<BookMstDto> bookMstList = this.bookMstService.findAvailableWithStockCount();
-        
         model.addAttribute("bookMstList", bookMstList);
-
         return "book/index";
     }
 
@@ -47,45 +44,35 @@ public class BookController {
         if (!model.containsAttribute("bookMstDto")) {
             model.addAttribute("bookMstDto", new BookMstDto());
         }
-
-        return "book/add";
-    }
-@PostMapping("/book/add")
-public String add(
-        @Valid @ModelAttribute BookMstDto dto,
-        BindingResult result,
-        Model model,
-        RedirectAttributes redirectAttributes)
-    {
-
-    if (result.hasErrors()) {
-
-    if (result.hasFieldErrors("title")) {
-        model.addAttribute(
-            "errTitle",
-            result.getFieldError("title").getDefaultMessage()
-        );
-    }
-
-    if (result.hasFieldErrors("isbn")) {
-        model.addAttribute(
-            "errISBN",
-            result.getFieldError("isbn").getDefaultMessage()
-        );
-    }
-
-    return "book/add";
-}
-
-    try {
-        bookMstService.insert(dto);
-    } catch (IllegalArgumentException e) {
-        result.rejectValue("isbn", "duplicate", e.getMessage());
         return "book/add";
     }
 
-    redirectAttributes.addFlashAttribute("message", "書籍を登録しました");
-
-    return "redirect:/book/index";
-}
+    @PostMapping("/book/add")
+    public String add(
+            @Valid @ModelAttribute BookMstDto dto,
+            BindingResult result,
+            Model model,
+            RedirectAttributes redirectAttributes) {
+        if (result.hasErrors()) {
+            if (result.hasFieldErrors("title")) {
+                model.addAttribute(
+                        "errTitle",
+                        result.getFieldError("title").getDefaultMessage());
+            }
+            if (result.hasFieldErrors("isbn")) {
+                model.addAttribute(
+                        "errISBN",
+                        result.getFieldError("isbn").getDefaultMessage());
+            }
+            return "book/add";
+        }
+        try {
+            bookMstService.insert(dto);
+        } catch (IllegalArgumentException e) {
+            result.rejectValue("isbn", "duplicate", e.getMessage());
+            return "book/add";
+        }
+        redirectAttributes.addFlashAttribute("message", "書籍を登録しました");
+        return "redirect:/book/index";
+    }
 }

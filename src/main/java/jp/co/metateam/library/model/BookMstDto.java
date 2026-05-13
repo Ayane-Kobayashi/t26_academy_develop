@@ -15,22 +15,12 @@ import lombok.Setter;
 @Getter
 @Setter
 public class BookMstDto {
-    
-    private Long id; 
-    
-@NotBlank(message = "書籍名を入力してください")
-@Size(max = 255, message = "書籍名は255文字以内で入力してください")
-private String title;
-
-@NotBlank(message = "ISBNを入力してください")
-
-@Pattern(
-    regexp = "^[0-9]*$",
-    message = "ISBNは半角数字で入力してください"
-)
-
-@Size(min = 13, max = 13, message = "ISBNは13桁で入力してください")
-
-private String isbn;
+    private Long id;
+    @NotBlank(message = "書籍名を入力してください")
+    @Size(max = 255, message = "書籍名は255文字以内で入力してください")
+    private String title;
+    @NotBlank(message = "ISBNを入力してください")
+    @Pattern(regexp = "^[0-9]*$", message = "ISBNは半角数字で入力してください")
+    @Size(min = 13, max = 13, message = "ISBNは13桁で入力してください")
+    private String isbn;
 }
-

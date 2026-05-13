@@ -21,19 +21,19 @@ import jp.co.metateam.library.repository.BookMstRepository;
 
 @Service
 public class BookMstService {
-
     private final BookMstRepository bookMstRepository;
-    
+
     @Autowired
-    public BookMstService(BookMstRepository bookMstRepository){
+    public BookMstService(BookMstRepository bookMstRepository) {
         this.bookMstRepository = bookMstRepository;
     }
-    
+
     public List<BookMstDto> findAvailableWithStockCount() {
         List<BookMst> books = this.bookMstRepository.findLimitedBook();
         List<BookMstDto> bookMstDtoList = new ArrayList<BookMstDto>();
 
         // 書籍の在庫数を取得
+        // FIXME:現状は書籍ID毎にDBに問い合わせている。一度のSQLで完了させたい。
         for (int i = 0; i < books.size(); i++) {
             BookMst book = books.get(i);
             BookMstDto bookMstDto = new BookMstDto();
@@ -42,33 +42,31 @@ public class BookMstService {
             bookMstDto.setTitle(book.getTitle());
             bookMstDtoList.add(bookMstDto);
         }
-
         return bookMstDtoList;
     }
-    
- public List<BookMst> findByIsbn(String isbn) {
-    return bookMstRepository.findByIsbn(isbn);
-}
 
-@Transactional
-public void insert(BookMst bookMst) {
-    bookMstRepository.save(bookMst);
-}
-@Transactional
-public void insert(BookMstDto dto) {
-
-    // 重複チェック
-    List<BookMst> list = bookMstRepository.findByIsbn(dto.getIsbn());
-
-    if (!list.isEmpty()) {
-        throw new IllegalArgumentException("ISBNが重複しています");
+    public List<BookMst> findByIsbn(String isbn) {
+        return bookMstRepository.findByIsbn(isbn);
     }
 
-    // DTO → Entity変換
-    BookMst book = new BookMst();
-    book.setTitle(dto.getTitle());
-    book.setIsbn(dto.getIsbn());
+    @Transactional
+    public void insert(BookMst bookMst) {
+        bookMstRepository.save(bookMst);
+    }
 
-    bookMstRepository.save(book);
-}
+    @Transactional
+    public void insert(BookMstDto dto) {
+
+        // 重複チェック
+        List<BookMst> list = bookMstRepository.findByIsbn(dto.getIsbn());
+        if (!list.isEmpty()) {
+            throw new IllegalArgumentException("ISBNが重複しています");
+        }
+
+        // DTO → Entity変換
+        BookMst book = new BookMst();
+        book.setTitle(dto.getTitle());
+        book.setIsbn(dto.getIsbn());
+        bookMstRepository.save(book);
+    }
 }

@@ -36,7 +36,6 @@ public class BookMst {
     private Timestamp deletedAt;
 
     /** Getters */
-
     public Long getId() {
         return this.id;
     }
@@ -54,7 +53,6 @@ public class BookMst {
     }
 
     /** Setters */
-
     public void setId(Long id) {
         this.id = id;
     }
